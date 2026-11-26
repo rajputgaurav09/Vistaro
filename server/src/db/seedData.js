@@ -1,0 +1,963 @@
+import bcrypt from 'bcryptjs';
+
+// Pre-computed hash for 'password123' to ensure instantaneous seed startup
+const DEMO_PASSWORD_HASH = bcrypt.hashSync('password123', 8);
+
+export const initialSeedData = {
+  users: [
+    {
+      id: 'usr-buyer-1',
+      name: 'Dr. Arvind Sharma',
+      email: 'buyer@delhi-tech.edu',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'institution',
+      organisation_id: 'org-dtu',
+      title: 'Dean of Student Welfare & Procurement Head',
+      phone: '+91 98101 23456',
+      created_at: new Date('2026-09-01T10:00:00Z').toISOString()
+    },
+    {
+      id: 'usr-buyer-2',
+      name: 'Priya Nair',
+      email: 'events@zenithsummit.org',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'institution',
+      organisation_id: 'org-zenith',
+      title: 'Director of Operations',
+      phone: '+91 98202 34567',
+      created_at: new Date('2026-09-05T11:00:00Z').toISOString()
+    },
+    {
+      id: 'usr-vendor-1',
+      name: 'Rajesh Verma',
+      email: 'contact@apexaudio.com',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'vendor',
+      organisation_id: 'org-apex',
+      title: 'Founder & Technical Director',
+      phone: '+91 98303 45678',
+      created_at: new Date('2026-09-10T09:30:00Z').toISOString()
+    },
+    {
+      id: 'usr-vendor-2',
+      name: 'Chef Manpreet Singh',
+      email: 'orders@royalfeast.in',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'vendor',
+      organisation_id: 'org-royal',
+      title: 'Managing Partner',
+      phone: '+91 98404 56789',
+      created_at: new Date('2026-09-12T14:15:00Z').toISOString()
+    },
+    {
+      id: 'usr-vendor-3',
+      name: 'Simran Kaur',
+      email: 'hello@starlightmedia.com',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'vendor',
+      organisation_id: 'org-starlight',
+      title: 'Head of Production',
+      phone: '+91 98505 67890',
+      created_at: new Date('2026-09-15T16:00:00Z').toISOString()
+    },
+    {
+      id: 'usr-cust-1',
+      name: 'Aman Mehta',
+      email: 'festhead@pulsecampus.org',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'service_customer',
+      organisation_id: 'org-pulse',
+      title: 'Convener, Pulse 2026 Festival',
+      phone: '+91 98606 78901',
+      created_at: new Date('2026-09-20T10:00:00Z').toISOString()
+    },
+    {
+      id: 'usr-admin-1',
+      name: 'Vistaro Operations Admin',
+      email: 'admin@vistaro.com',
+      password_hash: DEMO_PASSWORD_HASH,
+      role: 'admin',
+      organisation_id: 'org-vistaro',
+      title: 'Lead Operations & Services Manager',
+      phone: '+91 98707 89012',
+      created_at: new Date('2026-08-01T00:00:00Z').toISOString()
+    }
+  ],
+
+  organisations: [
+    {
+      id: 'org-dtu',
+      name: 'Delhi Technical University',
+      type: 'institution',
+      registration_number: 'UNI-DEL-10492',
+      city: 'New Delhi',
+      state: 'Delhi',
+      address: 'Shahbad Daulatpur, Bawana Road, Delhi 110042',
+      website: 'https://dtu.ac.in',
+      verified: true,
+      created_at: new Date('2026-09-01T10:00:00Z').toISOString()
+    },
+    {
+      id: 'org-zenith',
+      name: 'Zenith Global Summits Foundation',
+      type: 'institution',
+      registration_number: 'ORG-ZGS-8821',
+      city: 'Gurugram',
+      state: 'Haryana',
+      address: 'Cyber City, Phase 2, Gurugram 122002',
+      website: 'https://zenithsummit.org',
+      verified: true,
+      created_at: new Date('2026-09-05T11:00:00Z').toISOString()
+    },
+    {
+      id: 'org-apex',
+      name: 'Apex Audio, Lighting & Stagecraft Systems',
+      type: 'vendor',
+      registration_number: 'GSTIN07AAACA4928M1Z8',
+      city: 'New Delhi',
+      state: 'Delhi',
+      address: 'Okhla Industrial Area Phase III, New Delhi 110020',
+      website: 'https://apexaudio.com',
+      verified: true,
+      created_at: new Date('2026-09-10T09:30:00Z').toISOString()
+    },
+    {
+      id: 'org-royal',
+      name: 'Royal Feast Hospitality & Catering Services',
+      type: 'vendor',
+      registration_number: 'GSTIN07AABCR9912K1Z4',
+      city: 'Noida',
+      state: 'Uttar Pradesh',
+      address: 'Sector 63, Electronic City, Noida 201301',
+      website: 'https://royalfeast.in',
+      verified: true,
+      created_at: new Date('2026-09-12T14:15:00Z').toISOString()
+    },
+    {
+      id: 'org-starlight',
+      name: 'Starlight Creative Media & Stage Productions',
+      type: 'vendor',
+      registration_number: 'GSTIN07AACCS8810P1ZQ',
+      city: 'New Delhi',
+      state: 'Delhi',
+      address: 'Hauz Khas Enclave, New Delhi 110016',
+      website: 'https://starlightmedia.com',
+      verified: true,
+      created_at: new Date('2026-09-15T16:00:00Z').toISOString()
+    },
+    {
+      id: 'org-pulse',
+      name: 'Pulse Festival Organizing Committee',
+      type: 'customer',
+      registration_number: 'STU-COMM-2026',
+      city: 'New Delhi',
+      state: 'Delhi',
+      address: 'South Campus, New Delhi 110021',
+      website: 'https://pulsecampus.org',
+      verified: true,
+      created_at: new Date('2026-09-20T10:00:00Z').toISOString()
+    },
+    {
+      id: 'org-vistaro',
+      name: 'Vistaro Platform Team',
+      type: 'admin',
+      registration_number: 'VISTARO-TECH-PVT',
+      city: 'New Delhi',
+      state: 'Delhi',
+      address: 'Barakhamba Road, Connaught Place, New Delhi 110001',
+      website: 'https://vistaro.in',
+      verified: true,
+      created_at: new Date('2026-08-01T00:00:00Z').toISOString()
+    }
+  ],
+
+  vendor_profiles: [
+    {
+      id: 'vp-apex',
+      organisation_id: 'org-apex',
+      business_name: 'Apex Audio, Lighting & Stagecraft Systems',
+      tagline: 'High-fidelity acoustics, professional concert trusses & arena lighting',
+      service_categories: ['AV & Sound Systems', 'Stage & Lighting', 'Power & DG Generators'],
+      service_areas: ['Delhi NCR', 'Chandigarh', 'Jaipur', 'Dehradun'],
+      description: 'Apex is a premier audiovisual and stage rental agency specializing in university festivals, national symposiums, and corporate convocations. We provide JBL VTX and L-Acoustics arrays, Clay Paky intelligent moving heads, aluminium trussing, and on-site certified sound engineers.',
+      capacity: 'Up to 15,000 audience events; 4 simultaneous multi-stage festivals per week',
+      experience_years: 11,
+      contact_preferences: { email: true, phone: true, in_app: true },
+      verified_status: 'Verified Business Partner',
+      rating: 4.9,
+      completed_projects_count: 142,
+      certifications: ['ISO 9001:2015 Sound & Safety Certified', 'CEA Electrical Safety Clearance', 'Govt e-Marketplace Registered'],
+      created_at: new Date('2026-09-10T09:30:00Z').toISOString()
+    },
+    {
+      id: 'vp-royal',
+      organisation_id: 'org-royal',
+      business_name: 'Royal Feast Hospitality & Catering Services',
+      tagline: 'Hygiene-certified gourmet catering for campus conclaves and royal banquets',
+      service_categories: ['Catering & Food Services', 'VIP Hospitality', 'Beverage & Cafe Setups'],
+      service_areas: ['Delhi NCR', 'Greater Noida', 'Lucknow'],
+      description: 'Serving university convocations, corporate annual meetings, and youth conferences since 2014. Specialized in multi-cuisine buffet spreads, hygienically packaged boxed lunches, VIP silver service, and eco-friendly biodegradable cutlery.',
+      capacity: 'Catering up to 6,000 pax per day with mobile industrial kitchen fleet',
+      experience_years: 12,
+      contact_preferences: { email: true, phone: true, in_app: true },
+      verified_status: 'Verified Business Partner',
+      rating: 4.8,
+      completed_projects_count: 210,
+      certifications: ['FSSAI Central License #10018011005231', 'HACCP Food Safety Certified', 'Zero Single-Use Plastic Award 2025'],
+      created_at: new Date('2026-09-12T14:15:00Z').toISOString()
+    },
+    {
+      id: 'vp-starlight',
+      organisation_id: 'org-starlight',
+      business_name: 'Starlight Creative Media & Stage Productions',
+      tagline: 'Immersive LED screens, 4K multi-cam broadcasting & stage fabrication',
+      service_categories: ['LED Display & Screens', 'Videography & Live Streaming', 'Stage Design & Fabrication'],
+      service_areas: ['Delhi NCR', 'Mumbai', 'Bangalore'],
+      description: 'Full-service technical event production studio. We deliver outdoor/indoor P2.6 and P3.9 LED screen walls, robotic 4K PTZ cameras, Blackmagic live production switchers, custom thematic stage backdrops, and creative branding fabrications.',
+      capacity: 'Up to 3000 sq ft LED wall deployment with dual redundant switchers',
+      experience_years: 8,
+      contact_preferences: { email: true, phone: true, in_app: true },
+      verified_status: 'Self-Reported with Portfolio Verification',
+      rating: 4.7,
+      completed_projects_count: 88,
+      certifications: ['Blackmagic Design Certified Production House', 'Structural Rigging Safety Compliant'],
+      created_at: new Date('2026-09-15T16:00:00Z').toISOString()
+    }
+  ],
+
+  vendor_portfolio_items: [
+    {
+      id: 'port-apex-1',
+      vendor_id: 'vp-apex',
+      title: 'IIT TechKriti Mega Concert Sound Rigging',
+      category: 'AV & Sound Systems',
+      client_name: 'IIT Student Senate',
+      year: '2025',
+      description: 'Designed and deployed twin 12-box line arrays with 8 dual-18" subwoofers for a 12,000 attendee outdoor concert headlined by leading artists.',
+      images: ['https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80'],
+      tags: ['Concert Audio', 'Line Array', '12K Crowd']
+    },
+    {
+      id: 'port-apex-2',
+      vendor_id: 'vp-apex',
+      title: 'National Robotics Conclave Audio-Visual Setup',
+      category: 'AV & Sound Systems',
+      client_name: 'Delhi Technical University',
+      year: '2025',
+      description: 'Flown trussing with 24 beam-spot hybrid fixtures, digital wireless microphone grid with frequency coordination, and zero latency stage monitoring.',
+      images: ['https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80'],
+      tags: ['Academic Conclave', 'Stage Lighting', 'Audio Distribution']
+    },
+    {
+      id: 'port-royal-1',
+      vendor_id: 'vp-royal',
+      title: 'International Biotechnology Conference 3-Day Banquet',
+      category: 'Catering & Food Services',
+      client_name: 'Delhi Technical University',
+      year: '2025',
+      description: 'Provided full-course gourmet buffet and continuous high-tea service for 800 international scientists and faculty members across 3 days.',
+      images: ['https://images.unsplash.com/photo-1555244162-803834f70033?auto=format&fit=crop&w=800&q=80'],
+      tags: ['Executive Buffet', '800 Pax', 'International Delegates']
+    },
+    {
+      id: 'port-starlight-1',
+      vendor_id: 'vp-starlight',
+      title: 'Startup Conclave 2025 Curved LED Wall & Multi-cam Stream',
+      category: 'LED Display & Screens',
+      client_name: 'Zenith Global Summits',
+      year: '2025',
+      description: 'Constructed an ultra-wide 48ft x 14ft P2.6 high-refresh LED backdrop with redundant Novastar controllers, plus 4-camera live streaming to YouTube & LinkedIn.',
+      images: ['https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&w=800&q=80'],
+      tags: ['Curved LED Wall', '4K Broadcast', 'Hybrid Event']
+    }
+  ],
+
+  opportunity_categories: [
+    { id: 'cat-av', name: 'AV, Sound & Stage Lighting', slug: 'av-sound-lighting' },
+    { id: 'cat-catering', name: 'Catering & Hospitality', slug: 'catering-hospitality' },
+    { id: 'cat-led', name: 'LED Screens & Live Broadcasting', slug: 'led-broadcasting' },
+    { id: 'cat-stage', name: 'Stage Fabrication & Venue Decor', slug: 'stage-decor' },
+    { id: 'cat-print', name: 'Printing, Merchandise & ID Cards', slug: 'printing-merchandise' },
+    { id: 'cat-security', name: 'Event Security & Crowd Logistics', slug: 'security-logistics' },
+    { id: 'cat-photography', name: 'Photography & Aftermovie Production', slug: 'photo-video' }
+  ],
+
+  opportunities: [
+    {
+      id: 'opp-2026-001',
+      organisation_id: 'org-dtu',
+      organisation_name: 'Delhi Technical University',
+      title: 'Annual Cultural Festival (Resonance 2026) — Professional Stage Sound & Concert Lighting Rig',
+      category: 'AV, Sound & Stage Lighting',
+      type: 'rfq',
+      visibility: 'PUBLIC',
+      scope: 'Turnkey provision, installation, testing and 3-day on-site operation of professional arena sound system and intelligent dynamic lighting for the main stage (Outdoor Sports Ground, DTU). Expected crowd: 8,000-10,000 attendees per night.',
+      quantities: '2x 12-element line array hangs; 8x dual 18" subwoofers; 32x moving head beams/washes; 60ft x 40ft box truss rig; 2x 125kVA silent DG sets with automatic transfer switch.',
+      location: 'New Delhi (Main Campus)',
+      budget_min: 350000,
+      budget_max: 520000,
+      currency: 'INR',
+      is_budget_disclosed: true,
+      publish_date: new Date('2026-10-10T08:00:00Z').toISOString(),
+      submission_deadline: new Date('2026-10-25T17:00:00Z').toISOString(),
+      event_date: '2026-11-12 to 2026-11-14',
+      requirements: [
+        { id: 'req-1', title: 'Minimum 5 years verifiable experience in university or arena concert rigging', mandatory: true },
+        { id: 'req-2', title: 'L-Acoustics / JBL VTX / d&b audiotechnik certified equipment or equivalent rider-compliant acoustic specs', mandatory: true },
+        { id: 'req-3', title: 'Electrical safety certificate and certified rigging personnel on-site at all hours', mandatory: true },
+        { id: 'req-4', title: 'Dual silent DG generators with uninterrupted changeover capability', mandatory: true },
+        { id: 'req-5', title: 'GST registration certificate and past 2 years audited financial turnover', mandatory: false }
+      ],
+      attachments: [
+        { name: 'DTU_Resonance26_Stage_Technical_Rider.pdf', size: '2.4 MB', type: 'application/pdf' },
+        { name: 'Ground_Layout_and_Acoustic_Boundaries.pdf', size: '1.8 MB', type: 'application/pdf' }
+      ],
+      contact_details: 'Procurement Cell, DTU | Email: tenders@dtu.ac.in | Phone: +91 11 2787 1018',
+      status: 'published',
+      proposals_count: 2,
+      created_at: new Date('2026-10-10T08:00:00Z').toISOString()
+    },
+    {
+      id: 'opp-2026-002',
+      organisation_id: 'org-dtu',
+      organisation_name: 'Delhi Technical University',
+      title: 'International Robotics & AI Symposium — 3-Day Executive Catering & High-Tea Service',
+      category: 'Catering & Hospitality',
+      type: 'tender',
+      visibility: 'PUBLIC',
+      scope: 'Comprehensive catering for 450 national and international delegates across 3 conference days. Includes welcome breakfast buffet, working lunch with live regional counters, continuous executive coffee/tea station, and a formal networking dinner on Day 2.',
+      quantities: '450 pax breakfast x 3 days; 450 pax lunch x 3 days; 300 pax gala dinner x 1 night; continuous beverage replenishment.',
+      location: 'New Delhi (Convention Hall A & B)',
+      budget_min: 420000,
+      budget_max: 600000,
+      currency: 'INR',
+      is_budget_disclosed: true,
+      publish_date: new Date('2026-10-12T09:00:00Z').toISOString(),
+      submission_deadline: new Date('2026-10-28T18:00:00Z').toISOString(),
+      event_date: '2026-11-20 to 2026-11-22',
+      requirements: [
+        { id: 'req-c1', title: 'Valid Central/State FSSAI Food Business License', mandatory: true },
+        { id: 'req-c2', title: 'Documented capability for multi-cuisine menus (Continental, North Indian, Pan-Asian, Vegan & Jain counters)', mandatory: true },
+        { id: 'req-c3', title: '100% biodegradable or reusable banquetware (Zero Single-Use Plastic Policy)', mandatory: true },
+        { id: 'req-c4', title: 'Trained uniformed service staff with valid medical fitness verification', mandatory: true }
+      ],
+      attachments: [
+        { name: 'DTU_Catering_Schedule_and_Menu_Matrix.pdf', size: '1.2 MB', type: 'application/pdf' }
+      ],
+      contact_details: 'Dr. Arvind Sharma | Phone: +91 98101 23456',
+      status: 'published',
+      proposals_count: 1,
+      created_at: new Date('2026-10-12T09:00:00Z').toISOString()
+    },
+    {
+      id: 'opp-2026-003',
+      organisation_id: 'org-zenith',
+      organisation_name: 'Zenith Global Summits Foundation',
+      title: 'Global Tech Conclave 2026 — 40ft x 12ft Ultra-HD Curved LED Wall & Multi-Camera 4K Live Broadcast',
+      category: 'LED Screens & Live Broadcasting',
+      type: 'rfp',
+      visibility: 'PUBLIC',
+      scope: 'Supply, construct, engineer, and operate a seamless P2.6 ultra-HD curved LED stage wall, paired with a 4-camera live switching setup, live captioning integration, and redundant RTMP feeds to YouTube and corporate portal.',
+      quantities: '40ft x 12ft P2.6 curved screen; 4x 4K Sony/Blackmagic broadcast cameras with telephoto lenses; 1x video switching console with graphics playback.',
+      location: 'Gurugram (Kingdom of Dreams Convention Center)',
+      budget_min: 280000,
+      budget_max: 400000,
+      currency: 'INR',
+      is_budget_disclosed: true,
+      publish_date: new Date('2026-10-14T11:00:00Z').toISOString(),
+      submission_deadline: new Date('2026-10-22T15:00:00Z').toISOString(),
+      event_date: '2026-11-05 to 2026-11-06',
+      requirements: [
+        { id: 'req-l1', title: 'High-refresh rate (>=3840Hz) flicker-free broadcast quality LED panels', mandatory: true },
+        { id: 'req-l2', title: 'Dual redundant video processors with seamless failover switcher', mandatory: true },
+        { id: 'req-l3', title: 'Experienced live broadcast director and camera operators with portfolio proof', mandatory: true }
+      ],
+      attachments: [
+        { name: 'Stage_Blueprint_and_Broadcast_Requirements.pdf', size: '3.1 MB', type: 'application/pdf' }
+      ],
+      contact_details: 'Priya Nair, Zenith Summits | ops@zenithsummit.org',
+      status: 'published',
+      proposals_count: 1,
+      created_at: new Date('2026-10-14T11:00:00Z').toISOString()
+    },
+    {
+      id: 'opp-2026-004',
+      organisation_id: 'org-pulse',
+      organisation_name: 'Pulse Festival Organizing Committee',
+      title: 'Official Festival Merchandise & Delegate Kits — 3,500 Sets',
+      category: 'Printing, Merchandise & ID Cards',
+      type: 'tender',
+      visibility: 'PUBLIC',
+      scope: 'Production and scheduled delivery of 3,500 premium festival welcome kits comprising heavy-cotton screen-printed hoodies, RFID smart badges with custom printed lanyards, and canvas tote bags.',
+      quantities: '3,500 embroidered hoodies, 3,500 RFID delegate cards, 3,500 tote bags.',
+      location: 'New Delhi (South Campus Delivery)',
+      budget_min: 220000,
+      budget_max: 320000,
+      currency: 'INR',
+      is_budget_disclosed: false,
+      publish_date: new Date('2026-10-15T14:00:00Z').toISOString(),
+      submission_deadline: new Date('2026-11-02T18:00:00Z').toISOString(),
+      event_date: 'Delivery by 2026-11-15',
+      requirements: [
+        { id: 'req-m1', title: 'Fabric sample submission (minimum 320 GSM fleece cotton for hoodies)', mandatory: true },
+        { id: 'req-m2', title: 'High quality multi-color silkscreen or DTF printing resistant to multiple washes', mandatory: true },
+        { id: 'req-m3', title: 'Guaranteed batch delivery schedule with phased delivery inspections', mandatory: true }
+      ],
+      attachments: [
+        { name: 'Pulse26_Merchandise_Mockups_Specs.pdf', size: '4.5 MB', type: 'application/pdf' }
+      ],
+      contact_details: 'Aman Mehta | Email: contact@pulsecampus.org',
+      status: 'published',
+      proposals_count: 0,
+      created_at: new Date('2026-10-15T14:00:00Z').toISOString()
+    },
+    {
+      id: 'opp-2026-005',
+      organisation_id: 'org-zenith',
+      organisation_name: 'Zenith Global Summits Foundation',
+      title: 'Executive Boardroom Hybrid AV & Acoustic Upgrade',
+      category: 'AV, Sound & Stage Lighting',
+      type: 'rfp',
+      visibility: 'PRIVATE',
+      scope: 'Design, supply, and calibrate high-end acoustic treatment, ceiling beamforming microphone array, 4K intelligent auto-tracking cameras, and dual 85-inch interactive displays for Zenith Executive Boardroom. Strictly by invitation.',
+      quantities: '1x Shure MXA920 ceiling array, 2x 85" 4K interactive touch displays, 2x PTZ tracking cameras, complete acoustic wall paneling.',
+      location: 'Gurugram (Cyber City Executive Suites)',
+      budget_min: 500000,
+      budget_max: 850000,
+      currency: 'INR',
+      is_budget_disclosed: true,
+      publish_date: new Date('2026-10-18T10:00:00Z').toISOString(),
+      submission_deadline: new Date('2026-11-10T17:00:00Z').toISOString(),
+      event_date: 'Execution Nov 2026',
+      requirements: [
+        { id: 'req-priv-1', title: 'Enterprise AV integrator certification (Crestron / Extron / Shure)', mandatory: true },
+        { id: 'req-priv-2', title: 'Strict NDA execution prior to boardroom site inspection', mandatory: true },
+        { id: 'req-priv-3', title: 'Minimum 5 corporate boardroom references in Delhi NCR', mandatory: true }
+      ],
+      attachments: [
+        { name: 'Zenith_Boardroom_Confidential_Brief.pdf', size: '2.1 MB', type: 'application/pdf' }
+      ],
+      contact_details: 'Priya Nair | ops@zenithsummit.org',
+      status: 'published',
+      proposals_count: 0,
+      created_at: new Date('2026-10-18T10:00:00Z').toISOString()
+    }
+  ],
+
+  tender_invitations: [
+    {
+      id: 'inv-apex-001',
+      opportunity_id: 'opp-2026-005',
+      vendor_organisation_id: 'org-apex',
+      invited_email: 'contact@apexaudio.com',
+      status: 'INVITED',
+      notes: 'Invited based on prior high-fidelity acoustic performance at DTU and national conclaves.',
+      invited_at: new Date('2026-10-18T11:00:00Z').toISOString()
+    }
+  ],
+
+  saved_opportunities: [
+    {
+      id: 'save-1',
+      user_id: 'usr-vendor-1',
+      opportunity_id: 'opp-2026-001',
+      notes: 'Main priority tender. Preparing technical proposal and generator certification.',
+      saved_at: new Date('2026-10-11T10:00:00Z').toISOString()
+    },
+    {
+      id: 'save-2',
+      user_id: 'usr-vendor-1',
+      opportunity_id: 'opp-2026-003',
+      notes: 'Could partner with Starlight on audio relay if needed.',
+      saved_at: new Date('2026-10-14T12:00:00Z').toISOString()
+    },
+    {
+      id: 'save-3',
+      user_id: 'usr-vendor-2',
+      opportunity_id: 'opp-2026-002',
+      notes: 'DTU 3-day conference catering. Submitting proposal with bio-ware certificate.',
+      saved_at: new Date('2026-10-13T16:00:00Z').toISOString()
+    }
+  ],
+
+  proposals: [
+    {
+      id: 'prop-apex-001',
+      opportunity_id: 'opp-2026-001',
+      vendor_organisation_id: 'org-apex',
+      vendor_user_id: 'usr-vendor-1',
+      vendor_name: 'Apex Audio, Lighting & Stagecraft Systems',
+      quote_amount: 410000,
+      currency: 'INR',
+      delivery_timeline: 'Installation starting Nov 10, 2026 (48 hours prior). Complete acoustic soundcheck by Nov 11 evening.',
+      proposal_summary: 'Apex proposes a top-tier JBL VTX A12 dual line array deployment (12 boxes per side) with B28 ground-stacked subwoofers tuned via smaartLive v8. Includes 36 beam/wash moving heads, heavy-duty aluminium box truss, 2x 125kVA Cummins silent DG sets with ATS, and a team of 4 certified sound/lighting engineers on-site throughout the festival.',
+      breakdown: [
+        { item: 'JBL VTX A12 Array + Subs + Crown I-Tech HD Racks', amount: 195000 },
+        { item: 'Stage Lighting Rig (Clay Paky Scenius & Robe Washes) + Truss', amount: 110000 },
+        { item: 'Dual 125kVA Cummins Silent DG Sets + Cabling & ATS', amount: 65000 },
+        { item: 'Certified On-Site Acoustic & Lighting Engineers (3 days)', amount: 40000 }
+      ],
+      status: 'clarification_required',
+      readiness_score: 95,
+      submitted_at: new Date('2026-10-13T15:30:00Z').toISOString(),
+      clarification_threads: [
+        {
+          id: 'clar-1',
+          sender: 'institution',
+          sender_name: 'Dr. Arvind Sharma (DTU)',
+          message: 'Please confirm whether fuel for the 125kVA dual DG sets for 3 full festival evenings is included within the quoted Rs. 65,000 line item, or billed actuals.',
+          created_at: new Date('2026-10-14T11:20:00Z').toISOString(),
+          replied: false
+        }
+      ],
+      institution_notes: 'Technically outstanding equipment list. Best acoustic modeling submitted so far. Need clarification on generator fuel clause.',
+      created_at: new Date('2026-10-13T15:30:00Z').toISOString()
+    },
+    {
+      id: 'prop-royal-001',
+      opportunity_id: 'opp-2026-002',
+      vendor_organisation_id: 'org-royal',
+      vendor_user_id: 'usr-vendor-2',
+      vendor_name: 'Royal Feast Hospitality & Catering Services',
+      quote_amount: 495000,
+      currency: 'INR',
+      delivery_timeline: 'Full setup Nov 19 evening. Operational from 7:30 AM Nov 20 through 6:00 PM Nov 22.',
+      proposal_summary: 'Royal Feast presents a complete corporate dining experience for 450 delegates. Includes custom printed chef counters, live pasta & dim sum stations, authentic Awadhi dinner for the networking gala, 100% areca nut leaf biodegradable plates, and 16 groomed service personnel in formal attire.',
+      breakdown: [
+        { item: 'Buffet Breakfast & Lunch for 450 pax (3 days)', amount: 315000 },
+        { item: 'VIP Gala Dinner with Live Counters (300 pax)', amount: 120000 },
+        { item: 'Continuous High-Tea Station & Fresh Roasted Coffee Bar', amount: 35000 },
+        { item: 'Eco-friendly Biodegradable Tableware & Waste Segregation', amount: 25000 }
+      ],
+      status: 'submitted',
+      readiness_score: 100,
+      submitted_at: new Date('2026-10-15T18:00:00Z').toISOString(),
+      clarification_threads: [],
+      institution_notes: 'FSSAI valid and up to date. Excellent eco-friendly proposal matching campus zero-plastic policy.',
+      created_at: new Date('2026-10-15T18:00:00Z').toISOString()
+    }
+  ],
+
+  readiness_assessments: [
+    {
+      id: 'readiness-apex-001',
+      opportunity_id: 'opp-2026-001',
+      vendor_id: 'org-apex',
+      overall_readiness_pct: 95,
+      checklist_items: [
+        {
+          req_id: 'req-1',
+          title: 'Minimum 5 years verifiable experience in university or arena concert rigging',
+          status: 'ready',
+          notes: 'Apex has 11 years experience and attached 4 major university event references.',
+          evidence: 'Apex_Company_Profile_and_Track_Record.pdf'
+        },
+        {
+          req_id: 'req-2',
+          title: 'L-Acoustics / JBL VTX / d&b audiotechnik certified equipment or equivalent rider-compliant acoustic specs',
+          status: 'ready',
+          notes: 'Quoting JBL VTX A12 dual 12-element line array.',
+          evidence: 'VTX_A12_Acoustic_Certificate.pdf'
+        },
+        {
+          req_id: 'req-3',
+          title: 'Electrical safety certificate and certified rigging personnel on-site at all hours',
+          status: 'ready',
+          notes: 'CEA safety clearance attached. 4 personnel assigned.',
+          evidence: 'Electrical_Safety_Certificate_2026.pdf'
+        },
+        {
+          req_id: 'req-4',
+          title: 'Dual silent DG generators with uninterrupted changeover capability',
+          status: 'needs_verification',
+          notes: 'Dual Cummins generators specified; clarify whether fuel is included or separate.',
+          evidence: 'Cummins_125kVA_Specifications.pdf'
+        },
+        {
+          req_id: 'req-5',
+          title: 'GST registration certificate and past 2 years audited financial turnover',
+          status: 'ready',
+          notes: 'GSTIN07AAACA4928M1Z8 verified.',
+          evidence: 'GST_and_CA_Turnover_Cert.pdf'
+        }
+      ],
+      updated_at: new Date('2026-10-14T11:30:00Z').toISOString()
+    }
+  ],
+
+  evaluations: [
+    {
+      id: 'eval-1',
+      proposal_id: 'prop-apex-001',
+      reviewer_user_id: 'usr-buyer-1',
+      criteria_scores: {
+        technical_compliance: 95,
+        price_competitiveness: 90,
+        equipment_caliber: 98,
+        safety_and_experience: 92
+      },
+      total_score: 93.75,
+      notes: 'Strongest technical proposal. Top acoustic gear. Waiting for clarification on fuel before final shortlisting.',
+      status: 'in_review',
+      evaluated_at: new Date('2026-10-14T12:00:00Z').toISOString()
+    }
+  ],
+
+  vendor_enquiries: [
+    {
+      id: 'enq-001',
+      sender_organisation_id: 'org-zenith',
+      sender_user_id: 'usr-buyer-2',
+      sender_name: 'Priya Nair (Zenith Global Summits)',
+      vendor_organisation_id: 'org-starlight',
+      subject: 'Inquiry for 360-degree stage backdrop and dynamic projection mapping',
+      message: 'Hi Simran, we loved your work at the 2025 Conclave. We have a prospective high-level round table event coming up on Nov 28 in Gurugram for 200 CEOs. Could you advise if you have availability and approximate rates for a 360-degree thematic LED immersive backdrop?',
+      budget_range: '₹3,00,000 - ₹4,50,000',
+      needed_by: '2026-11-28',
+      status: 'replied',
+      responses: [
+        {
+          sender_id: 'usr-vendor-3',
+          sender_name: 'Simran Kaur (Starlight Productions)',
+          message: 'Hello Priya! Delighted to hear from you. Yes, we have our P2.6 ultra-fine pitch modules available for Nov 28. We can easily construct a 270 or 360 degree panoramic curved display. We can also provide a dedicated 3D motion graphics loop customized with your summit branding. I will prepare a detailed quotation for you shortly!',
+          created_at: new Date('2026-10-16T10:30:00Z').toISOString()
+        }
+      ],
+      created_at: new Date('2026-10-15T16:00:00Z').toISOString()
+    }
+  ],
+
+  service_catalog: [
+    {
+      id: 'srv-promotion',
+      slug: 'paid-promotion',
+      name: 'Paid Promotion & Brand Activations',
+      tagline: 'Strategic campaign placement across high-density campus and student networks',
+      description: 'Request a paid promotional placement or campaign for a brand, campus event, product launch, or student initiative. The Vistaro delivery team reviews your brief, coordinates multi-channel placements, campus ambassador activations, and digital broadcasts.',
+      indicative_process: [
+        'Submit campaign brief, target audience, budget range, and creative collateral',
+        'Vistaro marketing team reviews scope, confirms available channels and dates',
+        'Receive customized promotional quote with concrete channel deliverables',
+        'Review and approve quote to schedule campaign execution with live proof links'
+      ],
+      scope_boundaries: [
+        'Vistaro coordinates placement across verified university channels, partner screens, and student clubs',
+        'Does not guarantee artificial impressions or vanity virality metrics; focuses on verified reach and target relevance'
+      ],
+      key_fields: [
+        'Campaign Objective',
+        'Subject / Brand to Promote',
+        'Target Audience',
+        'Platform / Channel Preferences',
+        'Campaign Dates',
+        'Budget Range',
+        'Creative Assets URL / Drive Link'
+      ],
+      icon: 'Megaphone',
+      accent_color: 'blue'
+    },
+    {
+      id: 'srv-video',
+      slug: 'promotional-video',
+      name: 'Promotional Video Shoot & Editing',
+      tagline: 'Cinematic campus teasers, aftermovies, high-production reels & multicam edits',
+      description: 'Request end-to-end planning and production of high-impact promotional videos, festival aftermovies, founder interviews, or institutional spotlights. The Vistaro team brings experienced camera operators, gimbal pilots, cinema lenses, sound recordists, and rapid-turnaround post-production editors.',
+      indicative_process: [
+        'Submit creative video brief, shoot dates, preferred aesthetic reference, and required deliverables',
+        'Vistaro video team reviews logistics, equipment needs, and crew availability',
+        'Receive formal quote covering shoot duration, equipment tier, revisions, and release licenses',
+        'Accept quote to assign dedicated Director of Photography (DP) and lead editor with milestone tracker'
+      ],
+      scope_boundaries: [
+        'Includes storyboard alignment, on-site filming, sound design, color grading, and agreed revision rounds',
+        'Drone permits and specialized campus permissions coordinated jointly with host institution'
+      ],
+      key_fields: [
+        'Video Purpose & Narrative',
+        'Shoot Location / Venue',
+        'Preferred Shoot Date(s)',
+        'Duration & Format (e.g. 9:16 Reel, 16:9 4K Aftermovie)',
+        'Style & Reference Links',
+        'Required Deliverables & Cutdowns',
+        'Budget Range'
+      ],
+      icon: 'Video',
+      accent_color: 'indigo'
+    },
+    {
+      id: 'srv-event',
+      slug: 'event-planner-execution',
+      name: 'Event Planning & Ground Execution',
+      tagline: 'Turnkey event planning, vendor coordination, run-of-show & on-the-day stage management',
+      description: 'Request expert assistance in orchestrating complex campus festivals, tech conferences, product launches, or corporate convocations. The Vistaro team assists from initial vendor procurement and risk assessment to on-the-day technical coordination, VIP escorting, and stage run-of-show execution.',
+      indicative_process: [
+        'Submit event scope, expected footfall, venue parameters, required services, and budget estimate',
+        'Vistaro event lead reviews feasibility, required vendor categories, and timeline',
+        'Receive comprehensive service quote itemizing stage management, logistics, and crew allocation',
+        'Accept quote to assign dedicated Event Lead with shared milestone checklist and run-of-show'
+      ],
+      scope_boundaries: [
+        'Includes turnkey on-site coordination, vendor cueing, stage schedules, and safety monitoring',
+        'Third-party equipment and catering costs are either consolidated or contracted via Vistaro marketplace'
+      ],
+      key_fields: [
+        'Event Type & Theme',
+        'Date & Duration',
+        'Venue / Location',
+        'Expected Attendance',
+        'Required Services (AV, Catering, Decor, Security)',
+        'Guest / VIP Hospitality Needs',
+        'Budget Range'
+      ],
+      icon: 'CalendarDays',
+      accent_color: 'amber'
+    }
+  ],
+
+  service_requests: [
+    {
+      id: 'sr-2026-001',
+      customer_user_id: 'usr-cust-1',
+      customer_name: 'Aman Mehta',
+      customer_email: 'festhead@pulsecampus.org',
+      customer_phone: '+91 98606 78901',
+      service_type: 'Paid Promotion & Brand Activations',
+      service_slug: 'paid-promotion',
+      brief_details: 'Promotion for Pulse 2026 Annual Cultural Fest across 15 North & South Campus colleges. Need posters, Instagram collaboration posts on verified campus pages, and broadcast in 5 college newsletters.',
+      target_audience: 'Undergraduate and postgraduate college students aged 18-24 in Delhi NCR',
+      preferred_dates: '2026-10-25 to 2026-11-10',
+      location: 'Delhi NCR Campus Network',
+      budget_range: '₹40,000 - ₹55,000',
+      assets_link: 'https://drive.google.com/drive/folders/pulse2026-assets-demo',
+      status: 'quote_sent',
+      assigned_to_user_id: 'usr-admin-1',
+      assigned_to_name: 'Vistaro Operations Admin',
+      created_at: new Date('2026-10-12T14:00:00Z').toISOString(),
+      updated_at: new Date('2026-10-14T09:30:00Z').toISOString()
+    },
+    {
+      id: 'sr-2026-002',
+      customer_user_id: 'usr-buyer-2',
+      customer_name: 'Priya Nair',
+      customer_email: 'events@zenithsummit.org',
+      customer_phone: '+91 98202 34567',
+      service_type: 'Promotional Video Shoot & Editing',
+      service_slug: 'promotional-video',
+      brief_details: 'Need a 90-second cinematic high-energy teaser video + 3 social media reels (9:16) for the upcoming Global Tech Conclave.',
+      target_audience: 'Tech founders, investors, enterprise CIOs',
+      preferred_dates: 'Shoot on 2026-11-05; final edit by 2026-11-08',
+      location: 'Gurugram Convention Center',
+      budget_range: '₹60,000 - ₹85,000',
+      assets_link: 'https://zenithsummit.org/brand-assets.zip',
+      status: 'under_review',
+      assigned_to_user_id: 'usr-admin-1',
+      assigned_to_name: 'Vistaro Operations Admin',
+      created_at: new Date('2026-10-14T16:00:00Z').toISOString(),
+      updated_at: new Date('2026-10-14T16:00:00Z').toISOString()
+    },
+    {
+      id: 'sr-2026-003',
+      customer_user_id: 'usr-cust-1',
+      customer_name: 'Aman Mehta',
+      customer_email: 'festhead@pulsecampus.org',
+      customer_phone: '+91 98606 78901',
+      service_type: 'Event Planning & Ground Execution',
+      service_slug: 'event-planner-execution',
+      brief_details: 'On-the-ground stage management and artist hospitality lead for celebrity concert evening at Pulse 2026.',
+      target_audience: 'General festival audience (8,000 students)',
+      preferred_dates: '2026-11-14',
+      location: 'University Sports Ground, Delhi',
+      budget_range: '₹70,000 - ₹1,00,000',
+      assets_link: 'https://drive.google.com/folder/stage-flow',
+      status: 'scheduled',
+      assigned_to_user_id: 'usr-admin-1',
+      assigned_to_name: 'Vistaro Operations Admin',
+      created_at: new Date('2026-10-08T11:00:00Z').toISOString(),
+      updated_at: new Date('2026-10-13T10:00:00Z').toISOString()
+    }
+  ],
+
+  service_quotes: [
+    {
+      id: 'sq-001',
+      service_request_id: 'sr-2026-001',
+      scope: 'Multi-campus promotion package across 12 verified college student networks, 4 co-branded Instagram reels, and dedicated placement in the weekly Delhi Student Bulletin.',
+      deliverables: [
+        '4x Co-branded Instagram Reels across verified campus creator handles',
+        '12x Physical poster placements on approved campus noticeboards',
+        '1x Featured highlight in Delhi Campus Weekly Digest (18,000+ subscriber reach)',
+        'Weekly campaign analytics report with verifiable live screenshot logs'
+      ],
+      timeline: 'October 25 - November 08, 2026',
+      exclusions: 'External celebrity paid endorsement fees; campus security clearances outside standard bulletin rules.',
+      price: 48000,
+      currency: 'INR',
+      validity_date: '2026-10-22',
+      status: 'sent',
+      sent_at: new Date('2026-10-14T09:30:00Z').toISOString(),
+      accepted_at: null
+    },
+    {
+      id: 'sq-003',
+      service_request_id: 'sr-2026-003',
+      scope: 'Turnkey on-ground stage lead and artist hospitality run-of-show execution for the main concert.',
+      deliverables: [
+        '1x Senior Event Operations Director on-site for 14 hours',
+        '2x Stage Floor Managers with two-way radio headsets',
+        'Green room setup verification and rider fulfillment inspection',
+        'Master run-of-show cue sheet coordination with AV and security leads'
+      ],
+      timeline: 'November 14, 2026 (10:00 AM - 12:00 Midnight)',
+      exclusions: 'Third party artist fees and artist hotel accommodation.',
+      price: 75000,
+      currency: 'INR',
+      validity_date: '2026-10-20',
+      status: 'accepted',
+      sent_at: new Date('2026-10-10T12:00:00Z').toISOString(),
+      accepted_at: new Date('2026-10-12T15:00:00Z').toISOString()
+    }
+  ],
+
+  service_milestones: [
+    {
+      id: 'sm-001',
+      service_request_id: 'sr-2026-003',
+      title: 'Run-of-Show Alignment & Technical Rider Signoff',
+      description: 'Review final technical rider from the headline artist and align acoustic/lighting cues with stage management.',
+      due_date: '2026-10-30',
+      status: 'completed',
+      completed_at: new Date('2026-10-13T10:00:00Z').toISOString()
+    },
+    {
+      id: 'sm-002',
+      service_request_id: 'sr-2026-003',
+      title: 'Green Room & Backstage Security Dry Run',
+      description: 'Physical inspection of backstage perimeter, VIP barricading, and generator changeover readiness.',
+      due_date: '2026-11-10',
+      status: 'in_progress',
+      completed_at: null
+    },
+    {
+      id: 'sm-003',
+      service_request_id: 'sr-2026-003',
+      title: 'Live Event Stage Direction & Completion Signoff',
+      description: 'On-the-day live execution from soundcheck through artist departure.',
+      due_date: '2026-11-14',
+      status: 'pending',
+      completed_at: null
+    }
+  ],
+
+  tasks: [
+    {
+      id: 'tsk-001',
+      user_id: 'usr-vendor-1',
+      title: 'Respond to DTU Clarification on Generator Fuel Clause',
+      due_date: '2026-10-18T17:00:00Z',
+      status: 'todo',
+      priority: 'urgent',
+      related_type: 'proposal',
+      related_id: 'prop-apex-001',
+      created_at: new Date('2026-10-14T11:25:00Z').toISOString()
+    },
+    {
+      id: 'tsk-002',
+      user_id: 'usr-vendor-1',
+      title: 'Prepare Quotation for Annual Cultural Fest Stage Lighting (opp-2026-001)',
+      due_date: '2026-10-25T17:00:00Z',
+      status: 'completed',
+      priority: 'high',
+      related_type: 'opportunity',
+      related_id: 'opp-2026-001',
+      created_at: new Date('2026-10-11T10:00:00Z').toISOString()
+    },
+    {
+      id: 'tsk-003',
+      user_id: 'usr-buyer-1',
+      title: 'Review Apex Audio Clarification and Finalize Resonance 2026 Shortlist',
+      due_date: '2026-10-26T12:00:00Z',
+      status: 'todo',
+      priority: 'high',
+      related_type: 'proposal',
+      related_id: 'prop-apex-001',
+      created_at: new Date('2026-10-14T12:00:00Z').toISOString()
+    },
+    {
+      id: 'tsk-004',
+      user_id: 'usr-cust-1',
+      title: 'Review and Confirm Promotion Service Quote (sq-001)',
+      due_date: '2026-10-22T18:00:00Z',
+      status: 'todo',
+      priority: 'high',
+      related_type: 'service_request',
+      related_id: 'sr-2026-001',
+      created_at: new Date('2026-10-14T10:00:00Z').toISOString()
+    }
+  ],
+
+  notifications: [
+    {
+      id: 'notif-001',
+      user_id: 'usr-vendor-1',
+      title: 'Clarification Requested by Buyer',
+      message: 'Dr. Arvind Sharma (Delhi Technical University) requested a clarification on your proposal for Resonance 2026 stage sound.',
+      type: 'clarification',
+      read: false,
+      link: '/proposals/prop-apex-001',
+      created_at: new Date('2026-10-14T11:21:00Z').toISOString()
+    },
+    {
+      id: 'notif-002',
+      user_id: 'usr-buyer-1',
+      title: 'New Proposal Received',
+      message: 'Royal Feast Catering submitted a formal bid for International Robotics & AI Symposium.',
+      type: 'proposal',
+      read: true,
+      link: '/opportunities/opp-2026-002/proposals',
+      created_at: new Date('2026-10-15T18:05:00Z').toISOString()
+    },
+    {
+      id: 'notif-003',
+      user_id: 'usr-cust-1',
+      title: 'Service Quote Ready for Review',
+      message: 'Vistaro Team has prepared a customized quote for your Paid Promotion request (Pulse 2026).',
+      type: 'service_update',
+      read: false,
+      link: '/services/requests/sr-2026-001',
+      created_at: new Date('2026-10-14T09:32:00Z').toISOString()
+    }
+  ],
+
+  audit_logs: [
+    {
+      id: 'aud-001',
+      actor_id: 'usr-buyer-1',
+      actor_name: 'Dr. Arvind Sharma',
+      action: 'OPPORTUNITY_PUBLISHED',
+      entity_type: 'opportunity',
+      entity_id: 'opp-2026-001',
+      metadata: { title: 'Annual Cultural Festival (Resonance 2026) — Stage Rig' },
+      timestamp: new Date('2026-10-10T08:00:00Z').toISOString()
+    },
+    {
+      id: 'aud-002',
+      actor_id: 'usr-vendor-1',
+      actor_name: 'Rajesh Verma',
+      action: 'PROPOSAL_SUBMITTED',
+      entity_type: 'proposal',
+      entity_id: 'prop-apex-001',
+      metadata: { quote_amount: 410000 },
+      timestamp: new Date('2026-10-13T15:30:00Z').toISOString()
+    },
+    {
+      id: 'aud-003',
+      actor_id: 'usr-admin-1',
+      actor_name: 'Vistaro Admin',
+      action: 'SERVICE_QUOTE_SENT',
+      entity_type: 'service_quote',
+      entity_id: 'sq-001',
+      metadata: { price: 48000, recipient: 'Aman Mehta' },
+      timestamp: new Date('2026-10-14T09:30:00Z').toISOString()
+    }
+  ]
+};

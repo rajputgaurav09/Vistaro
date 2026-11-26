@@ -1,0 +1,357 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                      String            @id @default(uuid())
+  email                   String            @unique
+  passwordHash            String            @map("password_hash")
+  name                    String
+  role                    String            @default("vendor") // 'vendor', 'institution', 'service_customer', 'admin'
+  phone                   String?
+  title                   String?
+  organisationId          String?           @map("organisation_id")
+  organisation            Organisation?     @relation(fields: [organisationId], references: [id])
+  organisationMembers     OrganisationMember[]
+  proposals               Proposal[]
+  enquiriesSent           VendorEnquiry[]   @relation("EnquirySender")
+  tasks                   Task[]
+  notifications           Notification[]
+  serviceRequests         ServiceRequest[]  @relation("CustomerServiceRequests")
+  assignedServiceRequests ServiceRequest[]  @relation("AssignedAdminRequests")
+  savedOpportunities      SavedOpportunity[]
+  createdAt               DateTime          @default(now()) @map("created_at")
+  updatedAt               DateTime          @updatedAt @map("updated_at")
+
+  @@map("users")
+}
+
+model Organisation {
+  id                 String               @id @default(uuid())
+  name               String
+  type               String               @default("vendor") // 'vendor', 'institution', 'customer', 'admin'
+  registrationNumber String?              @map("registration_number")
+  address            String?
+  city               String?
+  state              String?
+  website            String?
+  logo               String?
+  verified           Boolean              @default(false)
+  users              User[]
+  members            OrganisationMember[]
+  vendorProfile      VendorProfile?
+  opportunities      Opportunity[]
+  proposals          Proposal[]
+  enquiriesReceived  VendorEnquiry[]      @relation("EnquiryVendorOrg")
+  invitedTenders     TenderInvitation[]   @relation("InvitedVendorOrg")
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+
+  @@map("organisations")
+}
+
+model OrganisationMember {
+  id             String       @id @default(uuid())
+  userId         String       @map("user_id")
+  user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organisationId String       @map("organisation_id")
+  organisation   Organisation @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  role           String       @default("member")
+  joinedAt       DateTime     @default(now()) @map("joined_at")
+
+  @@map("organisation_members")
+}
+
+model VendorProfile {
+  id                     String                @id @default(uuid())
+  organisationId         String                @unique @map("organisation_id")
+  organisation           Organisation          @relation(fields: [organisationId], references: [id], onDelete: Cascade)
+  businessName           String                @map("business_name")
+  tagline                String?
+  serviceCategories      String[]              @map("service_categories")
+  serviceAreas           String[]              @map("service_areas")
+  description            String?
+  capacity               String?
+  experienceYears        Int                   @default(1) @map("experience_years")
+  contactPreferences     Json?                 @map("contact_preferences")
+  verifiedStatus         String                @default("Unverified") @map("verified_status")
+  rating                 Float                 @default(5.0)
+  completedProjectsCount Int                   @default(0) @map("completed_projects_count")
+  certifications         String[]
+  portfolioItems         VendorPortfolioItem[]
+  createdAt              DateTime              @default(now()) @map("created_at")
+  updatedAt              DateTime              @updatedAt @map("updated_at")
+
+  @@map("vendor_profiles")
+}
+
+model VendorPortfolioItem {
+  id              String        @id @default(uuid())
+  vendorProfileId String        @map("vendor_profile_id")
+  vendorProfile   VendorProfile @relation(fields: [vendorProfileId], references: [id], onDelete: Cascade)
+  title           String
+  category        String
+  clientName      String?       @map("client_name")
+  year            String?
+  description     String?
+  images          String[]
+  tags            String[]
+  link            String?
+  createdAt       DateTime      @default(now()) @map("created_at")
+
+  @@map("vendor_portfolio_items")
+}
+
+model Opportunity {
+  id                 String             @id @default(uuid())
+  organisationId     String             @map("organisation_id")
+  organisation       Organisation       @relation(fields: [organisationId], references: [id])
+  organisationName   String             @map("organisation_name")
+  title              String
+  category           String
+  type               String             @default("tender") // 'tender', 'rfp', 'rfq', 'event_requirement'
+  scope              String
+  quantities         String?
+  location           String
+  budgetMin          Float              @default(0) @map("budget_min")
+  budgetMax          Float              @default(0) @map("budget_max")
+  currency           String             @default("INR")
+  isBudgetDisclosed  Boolean            @default(true) @map("is_budget_disclosed")
+  publishDate        DateTime           @default(now()) @map("publish_date")
+  submissionDeadline DateTime           @map("submission_deadline")
+  eventDate          String?            @map("event_date")
+  requirements       Json?
+  attachments        Json?
+  contactDetails     String?            @map("contact_details")
+  status             String             @default("published") // 'draft', 'published', 'under_review', 'awarded', 'closed'
+  visibility         String             @default("PUBLIC") // 'PUBLIC' or 'PRIVATE'
+  proposalsCount     Int                @default(0) @map("proposals_count")
+  proposals          Proposal[]
+  savedBy            SavedOpportunity[]
+  invitations        TenderInvitation[]
+  createdAt          DateTime           @default(now()) @map("created_at")
+  updatedAt          DateTime           @updatedAt @map("updated_at")
+
+  @@map("opportunities")
+}
+
+model TenderInvitation {
+  id                   String        @id @default(uuid())
+  opportunityId        String        @map("opportunity_id")
+  opportunity          Opportunity   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  vendorOrganisationId String?       @map("vendor_organisation_id")
+  vendorOrganisation   Organisation? @relation("InvitedVendorOrg", fields: [vendorOrganisationId], references: [id])
+  vendorEmail          String        @map("vendor_email")
+  status               String        @default("INVITED") // 'INVITED', 'ACCEPTED', 'DECLINED', 'REVOKED'
+  token                String?       @unique
+  invitedAt            DateTime      @default(now()) @map("invited_at")
+
+  @@map("tender_invitations")
+}
+
+model SavedOpportunity {
+  id            String      @id @default(uuid())
+  userId        String      @map("user_id")
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  opportunityId String      @map("opportunity_id")
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  notes         String?
+  savedAt       DateTime    @default(now()) @map("saved_at")
+
+  @@unique([userId, opportunityId])
+  @@map("saved_opportunities")
+}
+
+model Proposal {
+  id                    String        @id @default(uuid())
+  opportunityId         String        @map("opportunity_id")
+  opportunity           Opportunity   @relation(fields: [opportunityId], references: [id])
+  vendorOrganisationId  String        @map("vendor_organisation_id")
+  vendorOrganisation    Organisation  @relation(fields: [vendorOrganisationId], references: [id])
+  vendorUserId          String        @map("vendor_user_id")
+  vendorUser            User          @relation(fields: [vendorUserId], references: [id])
+  vendorName            String        @map("vendor_name")
+  quoteAmount           Float         @map("quote_amount")
+  currency              String        @default("INR")
+  deliveryTimeline      String        @map("delivery_timeline")
+  proposalSummary       String        @map("proposal_summary")
+  breakdown             Json?
+  status                String        @default("SUBMITTED") // 'DRAFT', 'SUBMITTED', 'CLARIFICATION_REQUIRED', 'SHORTLISTED', 'AWARDED', 'NOT_SELECTED', 'WITHDRAWN'
+  readinessScore        Float         @default(90) @map("readiness_score")
+  clarificationThreads  Json?         @map("clarification_threads")
+  institutionNotes      String?       @map("institution_notes")
+  evaluations           Evaluation[]
+  submittedAt           DateTime      @default(now()) @map("submitted_at")
+  createdAt             DateTime      @default(now()) @map("created_at")
+  updatedAt             DateTime      @updatedAt @map("updated_at")
+
+  @@map("proposals")
+}
+
+model Evaluation {
+  id             String    @id @default(uuid())
+  proposalId     String    @map("proposal_id")
+  proposal       Proposal  @relation(fields: [proposalId], references: [id], onDelete: Cascade)
+  reviewerUserId String    @map("reviewer_user_id")
+  criteriaScores Json      @map("criteria_scores")
+  totalScore     Float     @map("total_score")
+  notes          String?
+  status         String    @default("in_review")
+  evaluatedAt    DateTime  @default(now()) @map("evaluated_at")
+
+  @@map("evaluations")
+}
+
+model ReadinessAssessment {
+  id                   String   @id @default(uuid())
+  opportunityId        String   @map("opportunity_id")
+  vendorOrganisationId String   @map("vendor_organisation_id")
+  checklistItems       Json     @map("checklist_items")
+  overallReadinessPct  Int      @default(0) @map("overall_readiness_pct")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+
+  @@map("readiness_assessments")
+}
+
+model VendorEnquiry {
+  id                   String       @id @default(uuid())
+  senderOrganisationId String       @map("sender_organisation_id")
+  senderUserId         String       @map("sender_user_id")
+  senderUser           User         @relation("EnquirySender", fields: [senderUserId], references: [id])
+  senderName           String       @map("sender_name")
+  vendorOrganisationId String       @map("vendor_organisation_id")
+  vendorOrganisation   Organisation @relation("EnquiryVendorOrg", fields: [vendorOrganisationId], references: [id])
+  subject              String
+  message              String
+  requirements         String?
+  budgetRange          String?      @map("budget_range")
+  neededBy             String?      @map("needed_by")
+  status               String       @default("open")
+  responses            Json?
+  createdAt            DateTime     @default(now()) @map("created_at")
+  updatedAt            DateTime     @updatedAt @map("updated_at")
+
+  @@map("vendor_enquiries")
+}
+
+model ServiceCatalog {
+  id                String   @id @default(uuid())
+  slug              String   @unique
+  name              String
+  tagline           String?
+  description       String
+  indicativeProcess String[] @map("indicative_process")
+  scopeBoundaries   String[] @map("scope_boundaries")
+  keyFields         String[] @map("key_fields")
+  icon              String?
+
+  @@map("service_catalog")
+}
+
+model ServiceRequest {
+  id               String            @id @default(uuid())
+  customerUserId   String            @map("customer_user_id")
+  customerUser     User              @relation("CustomerServiceRequests", fields: [customerUserId], references: [id])
+  customerName     String            @map("customer_name")
+  customerEmail    String            @map("customer_email")
+  customerPhone    String?           @map("customer_phone")
+  serviceType      String            @map("service_type")
+  serviceSlug      String            @map("service_slug")
+  briefDetails     String            @map("brief_details")
+  targetAudience   String?           @map("target_audience")
+  preferredDates   String?           @map("preferred_dates")
+  location         String?
+  budgetRange      String?           @map("budget_range")
+  assetsLink       String?           @map("assets_link")
+  additionalNotes  String?           @map("additional_notes")
+  status           String            @default("submitted") // 'submitted', 'under_review', 'more_info_needed', 'quote_sent', 'accepted', 'scheduled', 'completed', 'declined'
+  assignedToUserId String?           @map("assigned_to_user_id")
+  assignedToUser   User?             @relation("AssignedAdminRequests", fields: [assignedToUserId], references: [id])
+  assignedToName   String?           @map("assigned_to_name")
+  adminNotes       String?           @map("admin_notes")
+  quote            ServiceQuote?
+  milestones       ServiceMilestone[]
+  createdAt        DateTime          @default(now()) @map("created_at")
+  updatedAt        DateTime          @updatedAt @map("updated_at")
+
+  @@map("service_requests")
+}
+
+model ServiceQuote {
+  id               String         @id @default(uuid())
+  serviceRequestId String         @unique @map("service_request_id")
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  scope            String
+  deliverables     String[]
+  timeline         String
+  exclusions       String?
+  price            Float
+  currency         String         @default("INR")
+  validityDate     String         @map("validity_date")
+  status           String         @default("sent") // 'sent', 'accepted', 'declined'
+  sentAt           DateTime       @default(now()) @map("sent_at")
+  acceptedAt       DateTime?      @map("accepted_at")
+  declineReason    String?        @map("decline_reason")
+
+  @@map("service_quotes")
+}
+
+model ServiceMilestone {
+  id               String         @id @default(uuid())
+  serviceRequestId String         @map("service_request_id")
+  serviceRequest   ServiceRequest @relation(fields: [serviceRequestId], references: [id], onDelete: Cascade)
+  title            String
+  description      String?
+  dueDate          String?        @map("due_date")
+  status           String         @default("pending") // 'pending', 'in_progress', 'completed'
+  completedAt      DateTime?      @map("completed_at")
+
+  @@map("service_milestones")
+}
+
+model Task {
+  id          String   @id @default(uuid())
+  userId      String   @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title       String
+  dueDate     DateTime @map("due_date")
+  status      String   @default("todo") // 'todo', 'in_progress', 'completed'
+  priority    String   @default("medium") // 'low', 'medium', 'high', 'urgent'
+  relatedType String?  @map("related_type")
+  relatedId   String?  @map("related_id")
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("tasks")
+}
+
+model Notification {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  title     String
+  message   String
+  type      String   // 'tender_invitation', 'proposal', 'clarification', 'status_change', 'service_update', 'deadline'
+  read      Boolean  @default(false)
+  link      String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+model AuditLog {
+  id         String   @id @default(uuid())
+  actorId    String?  @map("actor_id")
+  actorName  String?  @map("actor_name")
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  metadata   Json?
+  timestamp  DateTime @default(now())
+
+  @@map("audit_logs")
+}

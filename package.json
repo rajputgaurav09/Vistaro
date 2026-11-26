@@ -1,0 +1,13 @@
+{
+  "name": "vistaro",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Vistaro - Procurement Marketplace, Vendor Discovery, Services & Promotions",
+  "scripts": {
+    "dev:server": "cd server && node --watch src/index.js",
+    "dev:client": "cd client && vite",
+    "start:server": "cd server && node src/index.js",
+    "build:client": "cd client && vite build",
+    "test": "cd server && node --test test/*.test.js"
+  }
+}
